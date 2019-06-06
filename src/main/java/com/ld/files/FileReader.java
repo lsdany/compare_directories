@@ -62,6 +62,6 @@ public class FileReader {
 
     public static void main(String[] args) {
         FileReader fr = new FileReader();
-        fr.read("C:\\Users\\blautechDM\\Downloads\\");
+        fr.read("C:\\Users\\user\\Downloads\\");
     }
 }
