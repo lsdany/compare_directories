@@ -18,38 +18,43 @@ public class FileReader {
     private List<FileContent> fileContentsOrigin;
     private List<FileContent> fileContentsDestination;
 
+    private int counterOrigin;
+    private int counterDestination;
+
     public FileReader(){
         fileContentsOrigin = new ArrayList<>();
+        fileContentsDestination = new ArrayList<>();
     }
 
-    public void read(final String directory){
-        Path path = Paths.get(directory);
-        System.out.println("directory = [" + path + "]");
-        System.out.println(path.getFileName().getNameCount());
-        path.getFileName().iterator().forEachRemaining(System.out::println);
+    public void read(final String directoryOrigin, final String directoryDestination){
+        File fileOrigin = new File(directoryOrigin);
+        getFiles(fileOrigin, 'o');
+        System.out.printf("Origin files read: %d",counterOrigin);
+        File fileDestination = new File(directoryDestination);
+        getFiles(fileDestination, 'd');
+        System.out.printf("Destination files read: %d",counterDestination);
 
-        File file = new File(directory);
-        File[] files = getFiles(file);
-//        System.out.println(files.length);
-//        List<File> fileList = Arrays.asList(files);
-//        fileList.forEach(f -> {
-//            if(f.isDirectory()){
-//                System.out.println("--------Directory--------");
-//                File[] directoriesFiles = f.listFiles();
-//            }
-//            System.out.println(f.getName());
-//        });
+        if(fileContentsOrigin.size() > 0 && fileContentsDestination.size() > 0){
+        }
+
+
     }
 
-    private File[] getFiles(final File file){
+    private void getFiles(final File file, final char operation){
         File[] files = file.listFiles();
-        Arrays.asList(files).forEach(f -> {
+        Arrays.asList(files).parallelStream().forEach(f -> {
             if(f.isDirectory()){
-                getFiles(f);
+                getFiles(f, operation);
+            }else{
+                if(operation == 'o'){
+                    fileContentsOrigin.add(createFileContent(f));
+                    counterOrigin++;
+                }else{
+                    fileContentsDestination.add(createFileContent(f));
+                    counterDestination++;
+                }
             }
-            fileContentsOrigin.add(createFileContent(f));
         });
-        return null;
     }
 
     private FileContent createFileContent(final File file){
@@ -62,6 +67,6 @@ public class FileReader {
 
     public static void main(String[] args) {
         FileReader fr = new FileReader();
-        fr.read("C:\\Users\\user\\Downloads\\");
+        fr.read("/home/luisdany/Descargas","");
     }
 }

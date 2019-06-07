@@ -20,10 +20,8 @@ public class CheckSum {
 
         try(FileInputStream input = new FileInputStream(file)){
             MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM);
-            //Create byte array to read data in chunks
             byte[] byteArray = new byte[2048];
             int counter = 0;
-            //Read file data and update in message digest
             while ((counter = input.read(byteArray)) != -1) {
                 messageDigest.update(byteArray, 0, counter);
             }
@@ -33,7 +31,7 @@ public class CheckSum {
                 sb.append(Integer.toString((fileByte & 0xff) + 0x100, 16).substring(1));
             }
         }catch (IOException | NoSuchAlgorithmException io){
-            System.out.println("Error");
+            io.printStackTrace();
         }
         return sb.toString();
     }
