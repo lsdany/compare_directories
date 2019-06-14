@@ -29,13 +29,13 @@ public class FileReader {
     public void read(final String directoryOrigin, final String directoryDestination){
         File fileOrigin = new File(directoryOrigin);
         getFiles(fileOrigin, 'o');
-        System.out.printf("Origin files read: %d",counterOrigin);
+//        System.out.printf("Origin files read: %d \n",counterOrigin);
         File fileDestination = new File(directoryDestination);
         getFiles(fileDestination, 'd');
-        System.out.printf("Destination files read: %d",counterDestination);
+//        System.out.printf("Destination files read: %d \n",counterDestination);
 
-        if(fileContentsOrigin.size() > 0 && fileContentsDestination.size() > 0){
-        }
+        FileComparator fileComparator = new FileComparator();
+        fileComparator.compareDirectories(fileContentsOrigin, fileContentsDestination);
 
 
     }
@@ -60,13 +60,13 @@ public class FileReader {
     private FileContent createFileContent(final File file){
         String checkSum = CheckSum.getFileChecksum(file);
         FileContent fileContent =FileContent.builder().fileName(file.getName()).path(file.getPath()).checkSum(checkSum).build();
-        System.out.println(fileContent.toString());
+//        System.out.println(fileContent.toString());
         return fileContent;
     }
 
 
     public static void main(String[] args) {
         FileReader fr = new FileReader();
-        fr.read("/home/luisdany/Descargas","");
+        fr.read("/home/luisdany/folderTest/folderA/","/home/luisdany/folderTest/folderB/");
     }
 }

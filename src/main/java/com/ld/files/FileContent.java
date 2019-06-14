@@ -8,11 +8,19 @@ import lombok.*;
 
 @Getter
 @Builder
-@ToString
+@EqualsAndHashCode
 public class FileContent {
 
     private String fileName;
     private String path;
     private String checkSum;
 
+    @Override
+    public String toString() {
+        return "FileContent{" +
+                "fileName='" + fileName + '\'' +
+                ", path='" + path + '\'' +
+                ", checkSum='" + checkSum + '\'' +
+                "}\n";
+    }
 }
