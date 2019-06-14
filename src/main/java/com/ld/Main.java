@@ -15,6 +15,7 @@ public class Main {
             System.out.println("Enter directory origin: ");
             try(Scanner scann = new Scanner(System.in)){
                 String origin = scann.next();
+                System.out.println("Enter directory destination: ");
                 String destination = scann.next();
                 fileReader.read(origin, destination);
             }

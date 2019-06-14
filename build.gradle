@@ -7,6 +7,16 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 12
 
+jar {
+    manifest {
+        attributes "Main-Class": "com.ld.Main"
+    }
+    baseName = 'test'
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -20,8 +30,3 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.ld.Main'
-    }
-}
