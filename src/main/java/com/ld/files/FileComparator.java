@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,15 +13,16 @@ import java.util.stream.Stream;
  * @author luisdany pernillo
  */
 
-public class FileComparator {
+class FileComparator {
 
     private List<FileContent> fileContentsOrigin;
     private List<FileContent> fileContentsDestination;
 
-    public void compareDirectories(final List<FileContent> fileContentsOrigin, final List<FileContent> fileContentsDestination){
+    void compareDirectories(final List<FileContent> fileContentsOrigin, final List<FileContent> fileContentsDestination){
 
         this.fileContentsOrigin = fileContentsOrigin;
         this.fileContentsDestination = fileContentsDestination;
+
 
 //        System.out.println("Comparing files");
 
@@ -34,11 +36,11 @@ public class FileComparator {
                 .map(FileContent::getCheckSum)
                 .collect(Collectors.toList());
 
-
         List<String> filesDisjunction = new ArrayList<>(CollectionUtils.disjunction(checkSumOrigin, checkSumDestination));
 
 //        System.out.println("Different files: "+ filesDisjunction);
         getFilesByCheckSum(filesDisjunction);
+
     }
 
     private void getFilesByCheckSum(final List<String> checkSums){
@@ -52,7 +54,8 @@ public class FileComparator {
                 .distinct()
                 .collect(Collectors.toList());
 
-        Printer.printFiles(differentFiles);
-
+//        Printer.printFiles(differentFiles);
+        FileWriter.write(differentFiles);
     }
+
 }

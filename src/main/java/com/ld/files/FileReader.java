@@ -4,13 +4,10 @@ package com.ld.files;
 import com.ld.checksum.CheckSum;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Arrays.asList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class FileReader {
@@ -18,8 +15,10 @@ public class FileReader {
     private List<FileContent> fileContentsOrigin;
     private List<FileContent> fileContentsDestination;
 
-    private int counterOrigin;
-    private int counterDestination;
+    private int dotCount = 1;
+    private AtomicBoolean isAlive = new AtomicBoolean(true);
+
+
 
     public FileReader(){
         fileContentsOrigin = new ArrayList<>();
@@ -28,11 +27,19 @@ public class FileReader {
 
     public void read(final String directoryOrigin, final String directoryDestination){
         File fileOrigin = new File(directoryOrigin);
+
+        System.out.println("Comparing");
+        Thread thread = new Thread(progressDots());
+        thread.start();
+
         getFiles(fileOrigin, 'o');
-//        System.out.printf("Origin files read: %d \n",counterOrigin);
         File fileDestination = new File(directoryDestination);
         getFiles(fileDestination, 'd');
-//        System.out.printf("Destination files read: %d \n",counterDestination);
+
+        isAlive.set(false);
+
+        System.out.printf("\nOrigin files read: %d \n", fileContentsOrigin.size());
+        System.out.printf("Destination files read: %d \n", fileContentsDestination.size());
 
         FileComparator fileComparator = new FileComparator();
         fileComparator.compareDirectories(fileContentsOrigin, fileContentsDestination);
@@ -48,10 +55,8 @@ public class FileReader {
             }else{
                 if(operation == 'o'){
                     fileContentsOrigin.add(createFileContent(f));
-                    counterOrigin++;
                 }else{
                     fileContentsDestination.add(createFileContent(f));
-                    counterDestination++;
                 }
             }
         });
@@ -59,9 +64,7 @@ public class FileReader {
 
     private FileContent createFileContent(final File file){
         String checkSum = CheckSum.getFileChecksum(file);
-        FileContent fileContent =FileContent.builder().fileName(file.getName()).path(file.getPath()).checkSum(checkSum).build();
-//        System.out.println(fileContent.toString());
-        return fileContent;
+        return FileContent.builder().fileName(file.getName()).path(file.getPath()).checkSum(checkSum).build();
     }
 
 
@@ -69,4 +72,24 @@ public class FileReader {
         FileReader fr = new FileReader();
         fr.read("/home/luisdany/folderTest/folderA/","/home/luisdany/folderTest/folderB/");
     }
+
+    private Runnable progressDots(){
+        return () -> {
+            while (isAlive.get()){
+                try{
+//                    System.out.println(Thread.currentThread().getName());
+                    if (dotCount%100 == 0)
+                        System.out.println(".");
+                    else
+                        System.out.print(".");
+                    dotCount++;
+                    Thread.sleep(5);
+                }catch (InterruptedException e){
+                    System.out.println("error sleeping...");
+                }
+            }
+        };
+
+    }
+
 }
